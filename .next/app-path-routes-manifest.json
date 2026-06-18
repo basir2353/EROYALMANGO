@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/(marketing)/page": "/",
+  "/(marketing)/about/page": "/about",
+  "/(marketing)/checkout/page": "/checkout",
+  "/(marketing)/cart/page": "/cart",
+  "/(marketing)/blog/[slug]/page": "/blog/[slug]",
+  "/(marketing)/contact/page": "/contact",
+  "/(marketing)/faq/page": "/faq",
+  "/(marketing)/blog/page": "/blog",
+  "/(marketing)/products/page": "/products",
+  "/(marketing)/wishlist/page": "/wishlist",
+  "/(marketing)/products/[slug]/page": "/products/[slug]"
+}
