@@ -88,6 +88,7 @@ export function mapApiProductToShopProduct(raw: ApiProduct): ShopProduct {
       : [],
     reviewCount: Number(raw.reviewCount ?? 0),
     freeShipping: raw.freeShipping !== false,
+    createdAt: raw.createdAt ? String(raw.createdAt) : undefined,
   };
 }
 

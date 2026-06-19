@@ -22,7 +22,7 @@ import {
 } from "@/services/shop-products";
 
 const sortOptions: { value: SortOption; label: string }[] = [
-  { value: "default", label: "Default sorting" },
+  { value: "default", label: "Newest first" },
   { value: "price-asc", label: "Price: low to high" },
   { value: "price-desc", label: "Price: high to low" },
   { value: "name-asc", label: "Name: A to Z" },

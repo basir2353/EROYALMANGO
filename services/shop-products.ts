@@ -20,6 +20,7 @@ export type ShopProduct = {
   additionalInfo: { label: string; value: string }[];
   reviewCount: number;
   freeShipping: boolean;
+  createdAt?: string;
 };
 
 export function hasActiveSale(product: { onSale?: boolean }): boolean {
@@ -93,7 +94,11 @@ export function sortProducts(products: ShopProduct[], sort: SortOption): ShopPro
     case "name-desc":
       return list.sort((a, b) => b.name.localeCompare(a.name));
     default:
-      return list;
+      return list.sort((a, b) => {
+        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bTime - aTime;
+      });
   }
 }
 
