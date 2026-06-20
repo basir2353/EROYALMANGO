@@ -68,20 +68,20 @@ export default function Footer() {
       <div className="footer-bg pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="footer-top-glow pointer-events-none absolute inset-x-0 top-0 h-px" />
 
-      <div className="footer-glass relative mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
-        <div className="grid gap-12 sm:gap-14 lg:grid-cols-12 lg:gap-10 xl:gap-12">
+      <div className="footer-glass relative mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+        <div className="grid gap-10 sm:gap-14 lg:grid-cols-12 lg:gap-10 xl:gap-12">
           {/* Logo + About */}
-          <div className="lg:col-span-4 xl:col-span-5">
+          <div className="flex flex-col items-center text-center lg:col-span-4 lg:items-start lg:text-left xl:col-span-5">
             <FooterLogo />
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/45 sm:text-[15px]">
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/45 sm:mt-6 sm:text-[15px] lg:mx-0 mx-auto">
               {aboutText}
             </p>
           </div>
 
           {/* Quick Links */}
-          <div className="lg:col-span-2">
+          <div className="flex flex-col items-center text-center lg:col-span-2 lg:items-start lg:text-left">
             <h3 className="footer-heading">Quick Links</h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 flex flex-col items-center space-y-3 lg:items-start">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="footer-link group">
@@ -94,11 +94,14 @@ export default function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="lg:col-span-3">
+          <div className="flex flex-col items-center text-center lg:col-span-3 lg:items-start lg:text-left">
             <h3 className="footer-heading">Contact Information</h3>
-            <ul className="mt-5 space-y-4">
+            <ul className="mt-5 w-full max-w-xs space-y-4 lg:max-w-none">
               <li>
-                <a href={`tel:+${phoneDigits}`} className="footer-contact-item group">
+                <a
+                  href={`tel:+${phoneDigits}`}
+                  className="footer-contact-item group flex-col items-center text-center lg:flex-row lg:items-start lg:text-left"
+                >
                   <span className="footer-contact-icon">
                     <Phone className="h-4 w-4" strokeWidth={1.5} />
                   </span>
@@ -115,7 +118,7 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${email}`}
-                  className="footer-contact-item group"
+                  className="footer-contact-item group flex-col items-center text-center lg:flex-row lg:items-start lg:text-left"
                 >
                   <span className="footer-contact-icon">
                     <Mail className="h-4 w-4" strokeWidth={1.5} />
@@ -130,7 +133,7 @@ export default function Footer() {
                   </span>
                 </a>
               </li>
-              <li className="footer-contact-item">
+              <li className="footer-contact-item flex-col items-center text-center lg:flex-row lg:items-start lg:text-left">
                 <span className="footer-contact-icon">
                   <MapPin className="h-4 w-4" strokeWidth={1.5} />
                 </span>
@@ -147,13 +150,13 @@ export default function Footer() {
           </div>
 
           {/* Social */}
-          <div className="lg:col-span-3 xl:col-span-2">
+          <div className="flex flex-col items-center text-center lg:col-span-3 lg:items-start lg:text-left xl:col-span-2">
             <h3 className="footer-heading">Follow Us</h3>
-            <p className="mt-5 text-sm leading-relaxed text-white/40">
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/40 lg:max-w-none">
               Join our community for seasonal harvests, exclusive offers, and
               mango inspiration.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
               {socialLinks.map(({ href, label, icon: Icon }) => (
                 <motion.a
                   key={label}

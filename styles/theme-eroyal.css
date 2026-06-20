@@ -117,7 +117,13 @@
     height: 100% !important;
     width: 100% !important;
     object-fit: contain;
-    object-position: left center;
+    object-position: center center;
+  }
+
+  @media (min-width: 1024px) {
+    .site-page .brand-logo--footer img {
+      object-position: left center;
+    }
   }
 
   /* ── Hero (light gray) ── */

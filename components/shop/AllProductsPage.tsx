@@ -61,7 +61,7 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
+      <div className="flex flex-1 flex-col p-5 pb-7 sm:p-6 sm:pb-6">
         <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-400/60">
           {product.category}
         </p>
@@ -87,7 +87,7 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
         </div>
 
         {product.weights && (
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="shop-weight-options mt-4 flex flex-wrap gap-2 pb-5 sm:pb-4">
             {product.weights.map((weight) => (
               <button
                 key={weight}
@@ -106,7 +106,7 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
         {product.action === "select" ? (
           <Link
             href={`/products/${product.slug}${selectedWeight ? `?weight=${selectedWeight}` : ""}`}
-            className="select-options-btn mt-auto pt-5"
+            className="select-options-btn mt-auto pt-4 sm:pt-5"
           >
             Select Options
           </Link>

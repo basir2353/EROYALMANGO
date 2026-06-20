@@ -2192,7 +2192,7 @@
     border-radius: 9999px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.03);
-    padding: 0.35rem 0.85rem;
+    padding: 0.45rem 0.95rem;
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -2202,6 +2202,16 @@
       border-color 0.3s ease,
       color 0.3s ease,
       background 0.3s ease;
+  }
+
+  @media (min-width: 640px) {
+    .shop-weight-btn {
+      padding: 0.35rem 0.85rem;
+    }
+  }
+
+  .shop-weight-options {
+    margin-bottom: 0.125rem;
   }
 
   .shop-weight-btn:hover {

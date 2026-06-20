@@ -19,14 +19,14 @@ export default function BrandLogo({
 }: BrandLogoProps) {
   const image = (
     <span
-      className={`inline-flex shrink-0 items-center justify-start overflow-hidden ${boxClasses[variant]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center overflow-hidden lg:justify-start ${boxClasses[variant]} ${className}`}
     >
       <AppImage
         src="/images/e-royal-mango-logo.png"
         alt="E Royal Mango — Premium Export Quality Mangoes"
         width={277}
         height={300}
-        className="block h-full w-full object-contain object-left"
+        className={`block h-full w-full object-contain ${variant === "footer" ? "object-center lg:object-left" : "object-left"}`}
         priority={variant === "nav"}
       />
     </span>
@@ -39,7 +39,7 @@ export default function BrandLogo({
   return (
     <Link
       href={href}
-      className="group inline-flex shrink-0 items-center transition-opacity hover:opacity-90"
+      className="group inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90 lg:justify-start"
     >
       {image}
     </Link>
