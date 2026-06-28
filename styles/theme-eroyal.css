@@ -202,6 +202,25 @@
     background: transparent;
   }
 
+  @media (max-width: 1023px) {
+    .hero-sun {
+      opacity: 0.85;
+      box-shadow: 0 0 32px rgba(255, 193, 7, 0.14);
+    }
+
+    .hero-landscape-3d {
+      opacity: 1;
+    }
+
+    .hero-mobile-visual .mango-orb-body {
+      box-shadow:
+        inset -6px -10px 20px rgba(120, 30, 10, 0.26),
+        inset 5px 7px 16px rgba(255, 240, 180, 0.28),
+        0 14px 32px rgba(0, 0, 0, 0.14),
+        0 8px 22px rgba(255, 150, 40, 0.18);
+    }
+  }
+
   .hero-cta {
     background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
     color: #ffffff;

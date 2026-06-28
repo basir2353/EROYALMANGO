@@ -46,6 +46,8 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
   const mango2Ref = useRef<HTMLDivElement>(null);
   const mango3Ref = useRef<HTMLDivElement>(null);
   const mango4Ref = useRef<HTMLDivElement>(null);
+  const mobileMango1Ref = useRef<HTMLDivElement>(null);
+  const mobileMango2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -54,6 +56,15 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+
+    const mangoNodes = [
+      mango1Ref.current,
+      mango2Ref.current,
+      mango3Ref.current,
+      mango4Ref.current,
+      mobileMango1Ref.current,
+      mobileMango2Ref.current,
+    ].filter(Boolean);
 
     let onMouseMove: ((e: MouseEvent) => void) | null = null;
 
@@ -93,17 +104,12 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
           "-=0.45",
         )
         .from(
-          [
-            mango1Ref.current,
-            mango2Ref.current,
-            mango3Ref.current,
-            mango4Ref.current,
-          ],
+          mangoNodes,
           {
             scale: 0.4,
             opacity: 0,
             duration: 1.2,
-            stagger: 0.15,
+            stagger: 0.12,
             ease: "back.out(1.4)",
           },
           "-=0.8",
@@ -139,6 +145,25 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
           delay: 1.1,
         });
 
+        gsap.to(mobileMango1Ref.current, {
+          y: "-=16",
+          rotation: 6,
+          duration: 4.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+
+        gsap.to(mobileMango2Ref.current, {
+          y: "-=20",
+          rotation: -5,
+          duration: 4.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.5,
+        });
+
         gsap.to(sunRef.current, {
           scale: 1.06,
           opacity: 0.92,
@@ -158,18 +183,13 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
         });
 
         gsap.to(
-          [
-            mango1Ref.current,
-            mango2Ref.current,
-            mango3Ref.current,
-            mango4Ref.current,
-          ],
+          mangoNodes,
           {
             rotateY: "+=360",
             duration: 28,
             repeat: -1,
             ease: "none",
-            stagger: { each: 4 },
+            stagger: { each: 3.5 },
           },
         );
 
@@ -193,6 +213,8 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
             gsap.set(mango2Ref.current, { y: p * -160 });
             gsap.set(mango3Ref.current, { y: p * -80 });
             gsap.set(mango4Ref.current, { y: p * -60 });
+            gsap.set(mobileMango1Ref.current, { y: p * -90 });
+            gsap.set(mobileMango2Ref.current, { y: p * -120 });
           },
         });
 
@@ -234,7 +256,7 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
       <div ref={skyRef} className="hero-sky absolute inset-0" aria-hidden="true">
         <div
           ref={sunRef}
-          className="hero-sun absolute right-[8%] top-[12%] h-[min(42vw,420px)] w-[min(42vw,420px)] rounded-full md:right-[12%] md:top-[8%]"
+          className="hero-sun absolute right-[2%] top-[6%] h-[min(36vw,140px)] w-[min(36vw,140px)] rounded-full sm:right-[8%] sm:top-[10%] sm:h-[min(40vw,220px)] sm:w-[min(40vw,220px)] md:right-[12%] md:top-[8%] md:h-[min(42vw,420px)] md:w-[min(42vw,420px)]"
         />
       </div>
 
@@ -262,36 +284,38 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
 
       <ParticleField />
 
-      {/* Floating 3D Mangoes */}
-      <FloatingMango
-        ref={mango1Ref}
-        size={140}
-        className="absolute right-[6%] top-[28%] z-10 hidden sm:block md:right-[10%] md:top-[22%]"
-      />
-      <FloatingMango
-        ref={mango2Ref}
-        size={200}
-        className="absolute -right-[2%] bottom-[18%] z-20 hidden md:block lg:right-[4%] lg:bottom-[22%]"
-      />
-      <FloatingMango
-        ref={mango3Ref}
-        size={90}
-        className="absolute left-[4%] top-[38%] z-10 hidden lg:block"
-      />
-      <FloatingMango
-        ref={mango4Ref}
-        size={70}
-        className="absolute right-[12%] bottom-[32%] z-10 sm:hidden"
-      />
+      {/* Mobile 3D mango showcase */}
+      <div className="hero-mobile-visual pointer-events-none lg:hidden" aria-hidden="true">
+        <div ref={mobileMango1Ref} className="hero-mango-wrap hero-mango-wrap--mobile-lead">
+          <FloatingMango size={132} />
+        </div>
+        <div ref={mobileMango2Ref} className="hero-mango-wrap hero-mango-wrap--mobile-secondary">
+          <FloatingMango size={92} />
+        </div>
+      </div>
+
+      {/* Desktop floating 3D mangoes */}
+      <div ref={mango1Ref} className="hero-mango-wrap hero-mango-wrap--desktop-1 hidden lg:block">
+        <FloatingMango size={140} />
+      </div>
+      <div ref={mango2Ref} className="hero-mango-wrap hero-mango-wrap--desktop-2 hidden lg:block">
+        <FloatingMango size={200} />
+      </div>
+      <div ref={mango3Ref} className="hero-mango-wrap hero-mango-wrap--desktop-3 hidden lg:block">
+        <FloatingMango size={90} />
+      </div>
+      <div ref={mango4Ref} className="hero-mango-wrap hero-mango-wrap--desktop-4 hidden lg:block">
+        <FloatingMango size={70} />
+      </div>
 
       {/* Vignette & depth overlay */}
       <div className="hero-vignette pointer-events-none absolute inset-0 z-[5]" />
 
       {/* Content */}
-      <div className="relative z-20 mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16 lg:px-12">
+      <div className="relative z-20 mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-16 lg:px-12">
         <div
           ref={contentRef}
-          className="flex w-full max-w-3xl min-h-[calc(100dvh-9rem)] flex-col justify-center pt-4 pb-16 sm:pb-20"
+          className="flex w-full max-w-3xl min-h-[calc(100dvh-7rem)] flex-col justify-center pt-2 pb-12 max-lg:max-w-none max-lg:pr-[30%] sm:min-h-[calc(100dvh-9rem)] sm:pt-4 sm:pb-20 sm:max-lg:pr-[34%] lg:max-w-3xl lg:pr-0"
         >
           <p
             ref={eyebrowRef}
@@ -303,7 +327,7 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
 
           <h1
             ref={headingRef}
-            className="text-[2rem] font-semibold leading-[1.12] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] lg:leading-[1.08]"
+            className="text-[1.85rem] font-semibold leading-[1.12] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] lg:leading-[1.08]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {hero.title}{" "}
