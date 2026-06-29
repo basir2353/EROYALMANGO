@@ -70,7 +70,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
             0{index + 1}
           </span>
           <h3
-            className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-[1.65rem]"
+            className="mt-2 text-xl font-semibold tracking-tight text-white sm:text-2xl lg:text-[1.65rem]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {benefit.title}
@@ -142,7 +142,7 @@ export default function BenefitsSection({ data }: { data?: CmsBenefits | null })
                 />
               </div>
 
-              <div className="absolute bottom-8 left-8 right-8 sm:bottom-10 sm:left-10 sm:right-10">
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8 lg:bottom-10 lg:left-10 lg:right-10">
                 <div className="benefit-mango-badge inline-flex flex-col gap-1 rounded-2xl px-5 py-4">
                   <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-300/80">
                     Premium Variety

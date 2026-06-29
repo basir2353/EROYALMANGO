@@ -546,9 +546,10 @@
   }
 
   .select-options-btn:hover {
-    background: #e1f5fe;
-    border-color: #039be5;
-    color: #0277bd;
+    background: #006400;
+    border-color: #006400;
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgb(0 100 0 / 0.25);
   }
 
   /* ── Primary CTA buttons (green) ── */
@@ -766,18 +767,18 @@
     color: #0277bd;
   }
 
-  /* ── Footer (dark charcoal) ── */
+  /* ── Footer (dark green) ── */
   .footer {
-    background-color: #37474f;
+    background-color: #006400;
     background-image: none;
   }
 
   .footer-bg {
-    background: linear-gradient(180deg, #37474f 0%, #263238 100%);
+    background: linear-gradient(180deg, #006400 0%, #004d00 100%);
   }
 
   .footer-top-glow {
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.12), transparent);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
   }
 
   .footer-glass {
@@ -785,27 +786,32 @@
   }
 
   .footer-bottom {
-    background: #263238;
+    background: #004d00;
   }
 
   .footer-link:hover {
-    color: #4fc3f7;
+    color: #ffcc00;
   }
 
   .footer-link:hover .footer-link-dot {
-    background: #4fc3f7;
-    box-shadow: 0 0 8px rgb(79 195 247 / 0.4);
+    background: #ffcc00;
+    box-shadow: 0 0 8px rgb(255 204 0 / 0.45);
   }
 
   .footer-contact-icon {
-    background: rgb(255 255 255 / 0.08);
-    border-color: rgb(255 255 255 / 0.12);
-    color: #4fc3f7;
+    background: rgb(255 255 255 / 0.1);
+    border-color: rgb(255 255 255 / 0.14);
+    color: #ffcc00;
+  }
+
+  .footer-contact-item:hover .footer-contact-icon {
+    border-color: rgb(255 204 0 / 0.45);
+    background: rgb(255 204 0 / 0.12);
   }
 
   .footer-social-btn:hover {
-    color: #4fc3f7;
-    border-color: rgb(79 195 247 / 0.35);
+    color: #ffcc00;
+    border-color: rgb(255 204 0 / 0.4);
   }
 
   /* ── Benefits hero mango — full color, sharp (no wash-out) ── */
@@ -1450,10 +1456,10 @@
     color: transparent;
   }
 
-  /* ── Footer keeps light blue accents on dark bg ── */
+  /* ── Footer accents on dark green bg ── */
   .footer .text-gold-300,
   .footer .group:hover .text-gold-300 {
-    color: #4fc3f7;
+    color: #ffcc00;
   }
 
   .footer .text-gold-400\/40 {

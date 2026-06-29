@@ -124,7 +124,7 @@ function MagazineHero({ post }: { post: BlogPost }) {
         onMouseLeave={handleMouseLeave}
       >
         <motion.div
-          className="blog-magazine-hero-split grid min-h-[480px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:min-h-[520px]"
+          className="blog-magazine-hero-split grid min-h-[360px] sm:min-h-[420px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:min-h-[520px]"
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         >
           <div className="blog-magazine-hero-content order-2 flex flex-col justify-center p-6 sm:p-8 lg:order-1 lg:p-10 xl:p-12">
@@ -642,7 +642,7 @@ function BlogPageContent({
           </motion.section>
         )}
 
-        <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-12">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-12">
           <div className="min-w-0 space-y-12 sm:space-y-14">
             {/* Featured articles */}
             {featuredGridPosts.length > 0 && !isFiltering && (
@@ -720,7 +720,7 @@ function BlogPageContent({
           </div>
 
           {/* Sidebar */}
-          <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+          <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
             <SidebarPanel title="Recent Posts" icon={BookOpen} delay={0.05}>
               <ul className="space-y-3">
                 {sidebarRecentPosts.map((post) => (

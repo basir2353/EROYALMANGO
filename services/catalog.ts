@@ -14,6 +14,46 @@ function parseWeightOptions(raw: unknown): WeightOption[] {
   return raw.filter((w): w is WeightOption => typeof w === "object" && w !== null && "weight" in w);
 }
 
+function buildDefaultWeightOptions(
+  regularPrice: number,
+  salePrice: number | undefined,
+  onSale: boolean,
+): WeightOption[] {
+  const regular = Number(regularPrice) || 0;
+  const fiveKgRegular = Math.max(1, Math.round(regular * 0.6));
+  const fiveKgSale =
+    onSale && salePrice != null && Number.isFinite(Number(salePrice))
+      ? Number(salePrice)
+      : fiveKgRegular;
+
+  return [
+    {
+      weight: "5kg",
+      price: fiveKgRegular,
+      ...(onSale && salePrice != null ? { salePrice: fiveKgSale } : {}),
+    },
+    { weight: "10kg", price: regular },
+  ];
+}
+
+function resolveWeightOptions(
+  raw: unknown,
+  regularPrice: number,
+  salePrice: number | undefined,
+  onSale: boolean,
+): WeightOption[] {
+  const parsed = parseWeightOptions(raw);
+  const hasFive = parsed.some((w) => w.weight === "5kg");
+  const hasTen = parsed.some((w) => w.weight === "10kg");
+  if (hasFive && hasTen) return parsed;
+  return buildDefaultWeightOptions(regularPrice, salePrice, onSale);
+}
+
+function orderWeights(weights: ("10kg" | "5kg")[]): ("10kg" | "5kg")[] {
+  const set = new Set(weights);
+  return (["10kg", "5kg"] as const).filter((w) => set.has(w));
+}
+
 export function mapApiProductToShopProduct(raw: ApiProduct): ShopProduct {
   const images = Array.isArray(raw.images)
     ? (raw.images as { url?: string }[] | string[])
@@ -28,9 +68,20 @@ export function mapApiProductToShopProduct(raw: ApiProduct): ShopProduct {
         "Mango Variety"),
   );
 
-  const weightOptions = parseWeightOptions(raw.weightOptions);
-  const weights = weightOptions.map((w) => w.weight).filter((w): w is "10kg" | "5kg" => w === "10kg" || w === "5kg");
   const onSale = raw.onSale === true;
+  const regularPrice = Number(raw.regularPrice ?? 0);
+  const salePrice = onSale && raw.salePrice != null ? Number(raw.salePrice) : undefined;
+  const weightOptions = resolveWeightOptions(
+    raw.weightOptions,
+    regularPrice,
+    salePrice,
+    onSale,
+  );
+  const weights = orderWeights(
+    weightOptions
+      .map((w) => w.weight)
+      .filter((w): w is "10kg" | "5kg" => w === "10kg" || w === "5kg"),
+  );
   const weightPrices: Partial<Record<"10kg" | "5kg", number>> = {};
   for (const w of weightOptions) {
     if (w.weight === "10kg" || w.weight === "5kg") {
@@ -38,10 +89,11 @@ export function mapApiProductToShopProduct(raw: ApiProduct): ShopProduct {
     }
   }
 
-  const regularPrice = Number(raw.regularPrice ?? 0);
-  const salePrice = onSale && raw.salePrice != null ? Number(raw.salePrice) : undefined;
   const effectiveSalePrice = salePrice;
-  const minPrice = effectiveSalePrice ?? regularPrice;
+  const minPrice =
+    weights.length > 0
+      ? Math.min(...weights.map((w) => weightPrices[w] ?? regularPrice))
+      : effectiveSalePrice ?? regularPrice;
   const maxPrice =
     weights.length > 1
       ? Math.max(...Object.values(weightPrices).map(Number))
@@ -73,8 +125,8 @@ export function mapApiProductToShopProduct(raw: ApiProduct): ShopProduct {
             regularPrice > effectiveSalePrice
           ? Math.round((1 - effectiveSalePrice / regularPrice) * 100)
           : undefined,
-    weights: weights.length ? weights : undefined,
-    weightPrices: Object.keys(weightPrices).length ? weightPrices : undefined,
+    weights,
+    weightPrices,
     action: (raw.action as "select" | "cart") ?? "select",
     shortDescription: String(raw.shortDescription ?? ""),
     descriptionTitle: String(raw.descriptionTitle ?? raw.name),

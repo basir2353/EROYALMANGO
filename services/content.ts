@@ -81,11 +81,6 @@ export function buildContactDetails(settings: Awaited<ReturnType<typeof getPubli
 
   return [
     {
-      label: "Location",
-      value: address,
-      href: `https://maps.google.com/?q=${encodeURIComponent(address)}`,
-    },
-    {
       label: "Email",
       value: email,
       href: `mailto:${email}`,
@@ -93,7 +88,12 @@ export function buildContactDetails(settings: Awaited<ReturnType<typeof getPubli
     {
       label: "Phone",
       value: phone,
-      href: `tel:+${phoneDigits}`,
+      href: `https://wa.me/${phoneDigits}`,
+    },
+    {
+      label: "Origin",
+      value: address,
+      href: `https://maps.google.com/?q=${encodeURIComponent(address)}`,
     },
   ] as const;
 }

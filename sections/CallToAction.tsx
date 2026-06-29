@@ -84,7 +84,7 @@ export default function CallToAction({ data }: { data?: CmsContactCta | null }) 
         <FloatingMango size={120} />
       </motion.div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-5 text-center sm:px-8">
+      <div className="relative z-10 mx-auto max-w-4xl px-5 text-center sm:px-8 lg:px-12">
         <motion.div
           className="cta-glass-panel mx-auto rounded-[2rem] px-6 py-12 sm:rounded-[2.5rem] sm:px-12 sm:py-14 lg:px-16 lg:py-16"
           initial={{ opacity: 0, y: 40, scale: 0.98 }}

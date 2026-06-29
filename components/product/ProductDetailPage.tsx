@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   ZoomIn,
 } from "lucide-react";
+import ProductCardClassic from "@/components/product/ProductCardClassic";
 import {
   formatPriceRange,
   formatShopPrice,
@@ -27,44 +28,28 @@ import {
 
 type TabId = "description" | "additional" | "reviews";
 
-function RelatedProductCard({ product }: { product: ShopProduct }) {
-  const productHref = `/products/${product.slug}`;
-
+function RelatedProductCard({
+  product,
+  index,
+}: {
+  product: ShopProduct;
+  index: number;
+}) {
   return (
-    <article className="shop-product-card group flex flex-col">
-      <Link href={productHref} className="shop-product-image-wrap">
-        <AppImage
-          src={product.image}
-          alt={product.alt}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="shop-product-image-overlay" />
-        {shouldShowSaleBadge(product) && (
-          <span className="product-sale-badge">{getSaleBadgeLabel(product)}</span>
-        )}
-      </Link>
-      <div className="flex flex-1 flex-col p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-400/60">
-          {product.category}
-        </p>
-        <Link href={productHref}>
-          <h3
-            className="mt-2 text-lg font-semibold text-white transition-colors group-hover:text-gold-200"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {product.name}
-          </h3>
-        </Link>
-        <p className="mt-2 text-base font-semibold text-gold-300">
-          {formatPriceRange(product)}
-        </p>
-        <Link href={productHref} className="select-options-btn mt-4">
-          Select Options
-        </Link>
-      </div>
-    </article>
+    <ProductCardClassic
+      product={{
+        slug: product.slug,
+        name: product.name,
+        category: product.category,
+        image: product.image,
+        alt: product.alt,
+        minPrice: product.minPrice,
+        maxPrice: product.maxPrice,
+        compareAtPrice: product.compareAtPrice,
+        onSale: product.onSale,
+      }}
+      index={index}
+    />
   );
 }
 
@@ -402,17 +387,17 @@ export default function ProductDetailPage({
 
       {/* Related */}
       {related.length > 0 && (
-        <section className="relative overflow-hidden pb-24 sm:pb-32">
+        <section className="relative overflow-hidden bg-white pb-24 sm:pb-32">
           <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
             <h2
-              className="mb-8 text-2xl font-semibold text-white sm:text-3xl"
+              className="mb-8 text-2xl font-semibold text-[#263238] sm:text-3xl"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Related <span className="luxury-gradient-text italic">products</span>
+              Related products
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {related.map((item) => (
-                <RelatedProductCard key={item.id} product={item} />
+              {related.map((item, index) => (
+                <RelatedProductCard key={item.id} product={item} index={index} />
               ))}
             </div>
           </div>

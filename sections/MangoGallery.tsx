@@ -177,7 +177,7 @@ function Lightbox({
               e.stopPropagation();
               onPrev();
             }}
-            className="gallery-lightbox-nav absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 sm:flex"
+            className="gallery-lightbox-nav absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center sm:left-4 sm:h-auto sm:w-auto"
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
           </button>
@@ -188,7 +188,7 @@ function Lightbox({
               e.stopPropagation();
               onNext();
             }}
-            className="gallery-lightbox-nav absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 sm:flex"
+            className="gallery-lightbox-nav absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center sm:right-4 sm:h-auto sm:w-auto"
           >
             <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
           </button>
@@ -253,7 +253,7 @@ export default function MangoGallery({ data }: { data?: CmsGallery | null }) {
           </p>
 
           <h2
-            className="gallery-title text-4xl font-semibold tracking-tight sm:text-5xl lg:text-[3.25rem]"
+            className="gallery-title text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl lg:text-[3.25rem]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             <GalleryHeading title={data?.sectionTitle ?? "Mango Gallery"} />
@@ -273,7 +273,7 @@ export default function MangoGallery({ data }: { data?: CmsGallery | null }) {
           </p>
         </motion.div>
 
-        <div className="gallery-masonry grid grid-cols-1 gap-5 md:grid-cols-12 md:grid-rows-2 md:gap-6 lg:gap-7">
+        <div className="gallery-masonry grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-12 md:grid-rows-2 md:gap-6 lg:gap-7">
           {galleryItems.map((item, index) => (
             <motion.button
               key={item.id}

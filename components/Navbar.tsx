@@ -52,8 +52,8 @@ function NavLink({
       <span
         className={`relative z-10 text-[13px] font-medium tracking-wide transition-colors duration-300 ${
           isActive
-            ? "text-gold-300"
-            : "text-white/70 group-hover:text-white"
+            ? "text-[#4caf50]"
+            : "text-[#546e7a] group-hover:text-[#263238]"
         }`}
       >
         {label}
@@ -84,13 +84,13 @@ function IconButton({
   href?: string;
 }) {
   const className =
-    "relative flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/5 hover:text-gold-300";
+    "relative flex h-10 w-10 items-center justify-center rounded-full text-[#546e7a] transition-colors hover:bg-[#f5f5f5] hover:text-[#263238]";
 
   const content = (
     <>
       {children}
       {badge !== undefined && badge > 0 ? (
-        <span className="nav-cart-badge absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-br from-mango-400 to-gold-500 px-1 text-[10px] font-semibold text-royal-950">
+        <span className="nav-cart-badge absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ffcc00] px-1 text-[10px] font-bold text-[#212121]">
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}
@@ -153,8 +153,8 @@ export default function Navbar() {
   return (
     <>
       <motion.header
-        className={`fixed inset-x-0 top-0 z-50 h-16 overflow-hidden glass-nav transition-colors duration-500 ${
-          isScrolled ? "glass-nav-scrolled" : ""
+        className={`fixed inset-x-0 top-0 z-50 h-16 overflow-hidden border-b border-[#eeeeee] bg-white/95 shadow-[0_1px_8px_rgb(0_0_0/0.04)] backdrop-blur-md transition-shadow duration-300 ${
+          isScrolled ? "shadow-[0_2px_16px_rgb(0_0_0/0.08)]" : ""
         }`}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -167,8 +167,8 @@ export default function Navbar() {
           </div>
 
           {/* Center — Desktop Navigation */}
-          <div className="hidden flex-1 items-center justify-center lg:flex">
-            <ul className="flex items-center gap-6 xl:gap-8">
+          <div className="hidden flex-1 items-center justify-center md:flex">
+            <ul className="flex items-center gap-4 lg:gap-6 xl:gap-8">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <NavLink
@@ -182,7 +182,7 @@ export default function Navbar() {
           </div>
 
           {/* Right — Actions */}
-          <div className="flex min-w-[140px] items-center justify-end gap-1 sm:gap-2">
+          <div className="flex min-w-0 items-center justify-end gap-0.5 sm:min-w-[140px] sm:gap-1 md:gap-2">
             <IconButton href="/wishlist" label="Wishlist" badge={wishlistBadge}>
               <Heart className="h-[18px] w-[18px]" strokeWidth={1.75} />
             </IconButton>
@@ -192,7 +192,7 @@ export default function Navbar() {
             </IconButton>
 
             <motion.span
-              className="nav-cart-total hidden rounded-full bg-gradient-to-r from-gold-500/10 to-mango-400/10 px-3 py-1.5 text-[13px] font-semibold text-gold-300 ring-1 ring-gold-400/20 sm:inline-block"
+              className="nav-cart-total hidden rounded-full border border-[#e0e0e0] bg-[#fafafa] px-3 py-1.5 text-[13px] font-semibold text-[#263238] sm:inline-block"
               animate={{ scale: isScrolled ? 0.95 : 1 }}
               transition={{ duration: 0.3 }}
             >
@@ -203,7 +203,7 @@ export default function Navbar() {
             <motion.button
               type="button"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              className="ml-1 flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/5 hover:text-gold-300 lg:hidden"
+              className="ml-1 flex h-10 w-10 items-center justify-center rounded-full text-[#546e7a] transition-colors hover:bg-[#f5f5f5] hover:text-[#263238] md:hidden"
               onClick={() => setMobileOpen((prev) => !prev)}
               whileTap={{ scale: 0.92 }}
             >
@@ -222,7 +222,7 @@ export default function Navbar() {
         {mobileOpen && (
           <>
             <motion.div
-              className="mobile-nav-backdrop fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="mobile-nav-backdrop fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -231,15 +231,15 @@ export default function Navbar() {
             />
 
             <motion.div
-              className="mobile-nav-panel fixed inset-x-4 top-16 z-50 overflow-hidden rounded-2xl border border-white/10 lg:hidden"
+              className="mobile-nav-panel fixed inset-x-4 top-16 z-50 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-[#e8e8e8] bg-white shadow-[0_12px_40px_rgb(0_0_0/0.12)] md:hidden"
               initial={{ opacity: 0, y: -16, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.96 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
+              <div className="flex items-center justify-between border-b border-[#eeeeee] px-5 py-4">
                 <Logo />
-                <p className="text-xs font-medium uppercase tracking-[0.25em] text-gold-400/60">
+                <p className="text-xs font-medium uppercase tracking-[0.25em] text-[#78909c]">
                   Menu
                 </p>
               </div>
@@ -255,24 +255,24 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-[15px] font-medium transition-all duration-300 ${
+                      className={`flex items-center justify-between rounded-lg px-4 py-3.5 text-[15px] font-medium transition-all duration-300 ${
                         isActive(link.href)
-                          ? "bg-gradient-to-r from-gold-500/10 to-mango-400/5 text-gold-300"
-                          : "text-white/75 hover:bg-white/5 hover:text-white"
+                          ? "bg-[#fff8e1] text-[#f57f17]"
+                          : "text-[#546e7a] hover:bg-[#f5f5f5] hover:text-[#263238]"
                       }`}
                     >
                       {link.label}
                       {isActive(link.href) && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-gold-400 to-mango-400" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#ffcc00]" />
                       )}
                     </Link>
                   </motion.li>
                 ))}
               </ul>
 
-              <div className="border-t border-white/5 px-5 py-4">
+              <div className="border-t border-[#eeeeee] px-5 py-4">
                 <div className="flex items-center justify-end">
-                  <span className="nav-cart-total rounded-full bg-gradient-to-r from-gold-500/10 to-mango-400/10 px-3 py-1.5 text-sm font-semibold text-gold-300 ring-1 ring-gold-400/20">
+                  <span className="nav-cart-total rounded-full border border-[#e0e0e0] bg-[#fafafa] px-3 py-1.5 text-sm font-semibold text-[#263238]">
                     ₨{cartTotal.toLocaleString()}
                   </span>
                 </div>

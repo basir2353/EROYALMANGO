@@ -23,7 +23,8 @@ export default async function Home() {
     slug: p.slug,
     name: p.name,
     category: p.category,
-    price: p.minPrice,
+    minPrice: p.minPrice,
+    maxPrice: p.maxPrice,
     compareAtPrice: p.compareAtPrice,
     onSale: p.onSale,
     saleBadge: p.saleBadge,
@@ -36,7 +37,8 @@ export default async function Home() {
     slug: p.slug,
     name: p.name,
     category: p.category,
-    price: p.minPrice,
+    minPrice: p.minPrice,
+    maxPrice: p.maxPrice,
     compareAtPrice: p.compareAtPrice,
     onSale: p.onSale,
     saleBadge: p.saleBadge,
@@ -57,11 +59,11 @@ export default async function Home() {
   return (
     <main>
       {(!cms?.hero || cms.hero.isVisible) && <Hero data={cms?.hero} />}
+      <FeaturedProducts products={featuredProducts} />
+      <BestSellingProducts products={mostLovedProducts} />
       {(!cms?.benefits || cms.benefits.isVisible) && <BenefitsSection data={cms?.benefits} />}
       {(!cms?.gallery || cms.gallery.isVisible) && <MangoGallery data={cms?.gallery} />}
       {(!cms?.promo || cms.promo.isVisible) && <PromoBanner data={cms?.promo} />}
-      <FeaturedProducts products={featuredProducts} />
-      <BestSellingProducts products={mostLovedProducts} />
       {(!cms?.stats || cms.stats.isVisible) && <StatsSection data={cms?.stats} />}
       <TestimonialsSlider testimonials={testimonials} />
       {(!cms?.contactCta || cms.contactCta.isVisible) && <CallToAction data={cms?.contactCta} />}

@@ -56,7 +56,7 @@ function TestimonialSlide({ testimonial }: { testimonial: Testimonial }) {
       />
 
       <p
-        className="relative text-center text-lg leading-relaxed text-white/80 sm:text-xl sm:leading-relaxed lg:text-[1.35rem] lg:leading-[1.7]"
+        className="relative text-center text-base leading-relaxed text-white/80 sm:text-lg sm:leading-relaxed lg:text-[1.35rem] lg:leading-[1.7]"
         style={{ fontFamily: "var(--font-display)" }}
       >
         &ldquo;{testimonial.review}&rdquo;
@@ -154,7 +154,7 @@ export default function TestimonialsSlider({
           onBlur={() => setIsPaused(false)}
         >
           {/* Slider track */}
-          <div className="relative min-h-[420px] sm:min-h-[400px]">
+          <div className="relative min-h-0 sm:min-h-[380px] lg:min-h-[400px]">
             <AnimatePresence mode="wait">
               <TestimonialSlide
                 key={slides[activeIndex].id}

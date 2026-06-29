@@ -202,7 +202,7 @@ export default function PromoBanner({ data }: { data?: CmsPromo | null }) {
       <FloatingMango
         ref={mango2Ref}
         size={160}
-        className="absolute -right-[4%] bottom-[15%] z-[2] hidden opacity-95 md:block lg:right-[6%] lg:bottom-[20%]"
+        className="absolute -right-[2%] bottom-[15%] z-[2] hidden opacity-95 md:block lg:right-[6%] lg:bottom-[20%]"
       />
       <FloatingMango
         ref={mango3Ref}
@@ -216,7 +216,7 @@ export default function PromoBanner({ data }: { data?: CmsPromo | null }) {
       />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-[min(85vh,720px)] max-w-7xl items-center px-5 py-24 sm:min-h-[min(78vh,680px)] sm:px-8 sm:py-32 lg:px-12">
+      <div className="relative z-10 mx-auto flex min-h-[min(60vh,520px)] max-w-7xl items-center px-5 py-16 sm:min-h-[min(72vh,620px)] sm:px-8 sm:py-24 lg:min-h-[min(78vh,680px)] lg:px-12 lg:py-32">
         <div ref={contentRef} className="max-w-3xl">
           <p
             ref={eyebrowRef}
@@ -228,7 +228,7 @@ export default function PromoBanner({ data }: { data?: CmsPromo | null }) {
 
           <h2
             ref={headingRef}
-            className="text-[2rem] font-semibold leading-[1.12] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4rem] lg:leading-[1.08]"
+            className="text-[1.75rem] font-semibold leading-[1.15] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4rem] lg:leading-[1.08]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {promo.title}

@@ -28,7 +28,22 @@ export const DEFAULT_PRODUCT_IMAGE = BENEFITS_HERO_IMAGE;
 /** Resolve product/media URLs for display (uploads, catalog paths, remote). */
 export function resolveMediaUrl(url: string): string {
   if (!url || !url.trim()) return DEFAULT_PRODUCT_IMAGE;
-  if (/^https?:\/\//i.test(url)) return url;
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.startsWith("/images/")) {
+        const file = parsed.pathname.split("/").pop() ?? "";
+        if (CATALOG_IMAGE_FALLBACKS[file]) return CATALOG_IMAGE_FALLBACKS[file];
+        return parsed.pathname;
+      }
+      if (parsed.pathname.startsWith("/uploads/")) {
+        return `${API_ORIGIN}${parsed.pathname}`;
+      }
+    } catch {
+      /* use full URL as-is */
+    }
+    return url;
+  }
   if (url.startsWith("/uploads/")) return `${API_ORIGIN}${url}`;
   if (url.startsWith("/images/")) {
     const file = url.split("/").pop() ?? "";

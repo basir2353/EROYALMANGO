@@ -3,17 +3,17 @@
 import { useMemo, useState } from "react";
 import AppImage from "@/components/AppImage";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ChevronRight, ShoppingBag } from "lucide-react";
-import { useCart } from "@/store/CartContext";
+import { ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
+import ProductCardClassic from "@/components/product/ProductCardClassic";
 import { resolveMediaUrl } from "@/lib/media";
+import { useCart } from "@/store/CartContext";
+import { useRouter } from "next/navigation";
 import {
   formatPriceRange,
   formatShopPrice,
   getSaleBadgeLabel,
   getUnitPrice,
-  hasActiveSale,
   shouldShowCompareAtPrice,
   shouldShowSaleBadge,
   sortProducts,
@@ -36,102 +36,61 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
     product.weights?.[0] ?? null,
   );
 
+  const cardProduct = {
+    slug: product.slug,
+    name: product.name,
+    category: product.category,
+    image: product.image,
+    alt: product.alt,
+    minPrice: product.minPrice,
+    maxPrice: product.maxPrice,
+    compareAtPrice: product.compareAtPrice,
+    onSale: product.onSale,
+  };
+
+  const selectHref = `/products/${product.slug}${selectedWeight ? `?weight=${selectedWeight}` : ""}`;
+
   return (
-    <motion.article
-      className="shop-product-card group"
-      initial={{ opacity: 0, y: 32 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.06,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
-      <Link href={`/products/${product.slug}`} className="shop-product-image-wrap">
-        <AppImage
-          src={product.image}
-          alt={product.alt}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
-        />
-        <div className="shop-product-image-overlay" />
-        {shouldShowSaleBadge(product) && (
-          <span className="shop-sale-badge">{getSaleBadgeLabel(product)}</span>
-        )}
-      </Link>
-
-      <div className="flex flex-1 flex-col p-5 pb-7 sm:p-6 sm:pb-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-400/60">
-          {product.category}
-        </p>
-
-        <Link href={`/products/${product.slug}`}>
-          <h3
-            className="mt-2 text-lg font-semibold leading-snug text-white transition-colors group-hover:text-gold-200 sm:text-xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          {shouldShowCompareAtPrice(product) && (
-            <span className="text-sm text-white/35 line-through">
-              {formatShopPrice(product.compareAtPrice)}
-            </span>
-          )}
-          <p className="text-base font-semibold text-gold-300 sm:text-lg">
-            {formatPriceRange(product)}
-          </p>
-        </div>
-
-        {product.weights && (
-          <div className="shop-weight-options mt-4 flex flex-wrap gap-2 pb-5 sm:pb-4">
-            {product.weights.map((weight) => (
-              <button
-                key={weight}
-                type="button"
-                onClick={() => setSelectedWeight(weight)}
-                className={`shop-weight-btn ${
-                  selectedWeight === weight ? "shop-weight-btn-active" : ""
-                }`}
-              >
-                {weight}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {product.action === "select" ? (
-          <Link
-            href={`/products/${product.slug}${selectedWeight ? `?weight=${selectedWeight}` : ""}`}
-            className="select-options-btn mt-auto pt-4 sm:pt-5"
-          >
-            Select Options
-          </Link>
-        ) : (
-          <button
-            type="button"
-            className="shop-add-cart-btn mt-auto pt-5"
-            onClick={() => {
+    <ProductCardClassic
+      product={cardProduct}
+      index={index}
+      ctaLabel={product.action === "select" ? "Select options" : "Add to cart"}
+      ctaHref={product.action === "select" ? selectHref : undefined}
+      onCtaClick={
+        product.action === "cart"
+          ? () => {
               addItem({
                 slug: product.slug,
                 name: product.name,
                 image: resolveMediaUrl(product.image),
                 alt: product.alt,
                 quantity: 1,
-                unitPrice: getUnitPrice(product, null),
+                unitPrice: getUnitPrice(product, selectedWeight),
+                weight: selectedWeight ?? undefined,
               });
               router.push("/cart");
-            }}
-          >
-            <ShoppingBag className="h-4 w-4" strokeWidth={1.75} />
-            Add to Cart
-          </button>
-        )}
-      </div>
-    </motion.article>
+            }
+          : undefined
+      }
+      beforeCta={
+        <div className="mt-3 flex flex-wrap gap-2 pb-1">
+          {(product.weights ?? ["10kg", "5kg"]).map((weight) => (
+            <button
+              key={weight}
+              type="button"
+              onClick={() => setSelectedWeight(weight)}
+              className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
+                selectedWeight === weight
+                  ? "border-[#ffc107] bg-[#fff8e1] text-[#f57f17]"
+                  : "border-[#e0e0e0] bg-white text-[#78909c] hover:border-[#ffc107]"
+              }`}
+            >
+              {weight}
+            </button>
+          ))}
+        </div>
+      }
+    />
   );
 }
 
@@ -197,6 +156,7 @@ export default function AllProductsPage({
   hottestDeals: string[];
 }) {
   const [sort, setSort] = useState<SortOption>("default");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const sortedProducts = useMemo(
     () => sortProducts(products, sort),
@@ -204,7 +164,7 @@ export default function AllProductsPage({
   );
 
   return (
-    <section className="shop-section relative overflow-hidden pb-24 pt-8 sm:pb-32 sm:pt-10 lg:pb-40">
+    <section className="shop-section relative overflow-hidden bg-white pb-24 pt-8 sm:pb-32 sm:pt-10 lg:pb-40">
       <div className="shop-section-glow pointer-events-none absolute inset-0" />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
@@ -224,8 +184,80 @@ export default function AllProductsPage({
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[280px_minmax(0,1fr)]">
-          {/* Sidebar */}
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          {/* Main content — first on mobile */}
+          <div className="order-1 lg:order-2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-gold-400/80">
+                All Products
+              </p>
+              <h1
+                className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Shop{" "}
+                <span className="luxury-gradient-text italic">Mangoes</span>
+              </h1>
+            </motion.div>
+
+            <div className="mt-8 flex flex-col gap-4 border-b border-white/8 pb-6 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-white/45">
+                Showing all {products.length} results
+              </p>
+
+              <label className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+                <span className="text-xs font-medium uppercase tracking-[0.12em] text-white/40 sm:sr-only">
+                  Sort products
+                </span>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortOption)}
+                  className="shop-sort-select"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+              {sortedProducts.map((product, index) => (
+                <ShopProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Sidebar — collapsible on mobile */}
+          <div className="order-2 lg:order-1">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen((open) => !open)}
+              className="shop-sidebar-toggle mb-4 flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-semibold text-white lg:hidden"
+              aria-expanded={sidebarOpen}
+            >
+              <span>Categories &amp; Deals</span>
+              {sidebarOpen ? (
+                <ChevronUp className="h-4 w-4 shrink-0 text-gold-300" />
+              ) : (
+                <ChevronDown className="h-4 w-4 shrink-0 text-gold-300" />
+              )}
+            </button>
+
+            <aside
+              className={`space-y-6 lg:sticky lg:top-28 lg:self-start ${
+                sidebarOpen ? "block" : "hidden lg:block"
+              }`}
+            >
             <div className="shop-sidebar-panel">
               <h2
                 className="text-xl font-semibold text-white"
@@ -258,57 +290,7 @@ export default function AllProductsPage({
                 ))}
               </div>
             </div>
-          </aside>
-
-          {/* Main content */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-gold-400/80">
-                All Products
-              </p>
-              <h1
-                className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Shop{" "}
-                <span className="luxury-gradient-text italic">Mangoes</span>
-              </h1>
-            </motion.div>
-
-            <div className="mt-8 flex flex-col gap-4 border-b border-white/8 pb-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-white/45">
-                Showing all {products.length} results
-              </p>
-
-              <label className="flex items-center gap-3">
-                <span className="sr-only">Sort products</span>
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortOption)}
-                  className="shop-sort-select"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 xl:grid-cols-3 xl:gap-8">
-              {sortedProducts.map((product, index) => (
-                <ShopProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                />
-              ))}
-            </div>
+            </aside>
           </div>
         </div>
       </div>
