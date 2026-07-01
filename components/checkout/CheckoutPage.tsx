@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import AppImage from "@/components/AppImage";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -9,8 +9,9 @@ import {
   ChevronRight,
   ShoppingBag,
 } from "lucide-react";
+import BankTransferPaymentPanel from "@/components/checkout/BankTransferPaymentPanel";
 import { useCart } from "@/store/CartContext";
-import { submitOrder } from "@/lib/api";
+import { getPublicSettings, submitOrder, type PublicPaymentSettings } from "@/lib/api";
 import { formatShopPrice } from "@/services/shop-products";
 
 const pakistanStates = [
@@ -53,22 +54,65 @@ const initialForm: CheckoutForm = {
   orderNotes: "",
 };
 
+type PaymentMethod = "cod" | "bank_transfer";
+
+function mapPaymentMethod(method: PaymentMethod): string {
+  return method === "cod" ? "cash_on_delivery" : "direct_bank_transfer";
+}
+
 function formatLineItem(name: string, weight?: string, quantity?: number) {
   const label = weight ? `${name} - ${weight}` : name;
-  return `${label} Ã— ${quantity ?? 1}`;
+  return `${label} × ${quantity ?? 1}`;
 }
+
+const DEFAULT_PAYMENT_SETTINGS: PublicPaymentSettings = {
+  jazzCash: true,
+  easyPaisa: true,
+  bankTransfer: true,
+  jazzCashAccount: "03073970850",
+  easyPaisaAccount: "03154749309",
+  bankName: "MCB",
+  bankAccountTitle: "BABER SOHAIL",
+  bankAccountNumber: "1436665541000808",
+  bankIban: "PK42MUCB1436665541000808",
+  paymentInstructions:
+    "Transfer the exact order total and upload your payment screenshot or receipt below.",
+};
+
+type PendingBankOrder = {
+  id: string;
+  orderNumber: string;
+  total: number;
+  email: string;
+};
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount, isHydrated, clearCart } = useCart();
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [showCoupon, setShowCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-  const [paymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank_transfer");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [termsError, setTermsError] = useState<string | null>(null);
   const [placed, setPlaced] = useState(false);
   const [placedOrderEmail, setPlacedOrderEmail] = useState<string | null>(null);
   const [emailConfirmationSent, setEmailConfirmationSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [paymentSettings, setPaymentSettings] = useState<PublicPaymentSettings>(
+    DEFAULT_PAYMENT_SETTINGS,
+  );
+  const [pendingBankOrder, setPendingBankOrder] = useState<PendingBankOrder | null>(null);
+  const [placedOrderNumber, setPlacedOrderNumber] = useState<string | null>(null);
+  const [receiptSubmitted, setReceiptSubmitted] = useState(false);
+
+  useEffect(() => {
+    getPublicSettings().then((settings) => {
+      if (settings?.payments) {
+        setPaymentSettings({ ...DEFAULT_PAYMENT_SETTINGS, ...settings.payments });
+      }
+    });
+  }, []);
 
   const updateField = (field: keyof CheckoutForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -76,8 +120,15 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!agreedToTerms) {
+      setTermsError("You must agree to the terms and conditions to place your order.");
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError(null);
+    setTermsError(null);
 
     const { data: order, error } = await submitOrder({
       customerInfo: {
@@ -110,7 +161,7 @@ export default function CheckoutPage() {
       tax: 0,
       discount: 0,
       total: Number(subtotal),
-      paymentMethod: paymentMethod === "cod" ? "cash_on_delivery" : paymentMethod,
+      paymentMethod: mapPaymentMethod(paymentMethod),
       notes: form.orderNotes.trim() || undefined,
       couponCode: couponCode.trim() || undefined,
     });
@@ -125,22 +176,51 @@ export default function CheckoutPage() {
       return;
     }
 
+    clearCart();
+
+    if (paymentMethod === "bank_transfer" || order.requiresPaymentReceipt) {
+      const orderId = String(order.id ?? order._id ?? "");
+      if (!orderId) {
+        setSubmitError("Order was created but payment could not be started. Please contact support.");
+        return;
+      }
+
+      setPendingBankOrder({
+        id: orderId,
+        orderNumber: String(order.orderNumber ?? "—"),
+        total: Number(order.total ?? subtotal),
+        email: form.email.trim(),
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     setPlaced(true);
     setPlacedOrderEmail(form.email.trim());
+    setPlacedOrderNumber(String(order.orderNumber ?? ""));
     setEmailConfirmationSent(Boolean(order.emailConfirmationSent));
-    clearCart();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const completeBankPayment = (result: { emailConfirmationSent?: boolean }) => {
+    setPlacedOrderNumber(pendingBankOrder?.orderNumber ?? null);
+    setReceiptSubmitted(true);
+    setPendingBankOrder(null);
+    setPlaced(true);
+    setPlacedOrderEmail(form.email.trim());
+    setEmailConfirmationSent(Boolean(result.emailConfirmationSent));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (!isHydrated) {
     return (
       <section className="shop-section py-24 text-center">
-        <p className="text-sm text-white/40">Loading checkoutâ€¦</p>
+        <p className="text-sm text-white/40">Loading checkout…</p>
       </section>
     );
   }
 
-  if (items.length === 0 && !placed) {
+  if (items.length === 0 && !placed && !pendingBankOrder) {
     return (
       <section className="cart-section relative min-h-[calc(100vh-5rem)] overflow-hidden pb-24 pt-8">
         <div className="relative mx-auto max-w-lg px-5 text-center sm:px-8">
@@ -181,10 +261,22 @@ export default function CheckoutPage() {
               Thank you!
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-white/55">
-              Your order has been placed successfully. We will contact you at{" "}
-              <span className="text-gold-300">{form.email || form.phone}</span> to
+              {placedOrderNumber ? (
+                <>
+                  Your order <span className="text-gold-300">{placedOrderNumber}</span> has been
+                  received. We will contact you at{" "}
+                </>
+              ) : (
+                <>Your order has been placed successfully. We will contact you at </>
+              )}
+              <span className="text-gold-300">{placedOrderEmail || form.email || form.phone}</span> to
               confirm delivery.
             </p>
+            {receiptSubmitted ? (
+              <p className="mt-3 text-sm leading-relaxed text-white/55">
+                We have received your payment receipt and will verify it before processing your order.
+              </p>
+            ) : null}
             {emailConfirmationSent && placedOrderEmail ? (
               <p className="mt-3 text-sm leading-relaxed text-gold-300/90">
                 A confirmation email has been sent to{" "}
@@ -197,6 +289,16 @@ export default function CheckoutPage() {
           </motion.div>
         </div>
       </section>
+    );
+  }
+
+  if (pendingBankOrder) {
+    return (
+      <BankTransferPaymentPanel
+        order={pendingBankOrder}
+        payments={paymentSettings}
+        onComplete={completeBankPayment}
+      />
     );
   }
 
@@ -501,31 +603,83 @@ export default function CheckoutPage() {
               </div>
 
               <div className="checkout-payment mt-8">
-                <label className="checkout-payment-option">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cod"
-                    checked={paymentMethod === "cod"}
-                    readOnly
-                    className="checkout-radio"
-                  />
-                  <span className="font-semibold text-white">Cash on delivery</span>
-                </label>
-                <p className="checkout-payment-note mt-3 text-sm text-white/45">
-                  Pay with cash upon delivery.
-                </p>
+                <fieldset className="checkout-payment-options border-0 p-0 m-0">
+                  <legend className="sr-only">Payment method</legend>
+
+                  <div className="checkout-payment-block">
+                    <label className="checkout-payment-option">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="bank_transfer"
+                        checked={paymentMethod === "bank_transfer"}
+                        onChange={() => setPaymentMethod("bank_transfer")}
+                        className="checkout-radio"
+                      />
+                      <span className="font-semibold text-white">Direct bank transfer</span>
+                    </label>
+                    {paymentMethod === "bank_transfer" && (
+                      <p className="checkout-payment-note text-sm text-white/45">
+                        Make your payment directly into our bank account. Your order will be
+                        processed after payment is received.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="checkout-payment-block mt-4">
+                    <label className="checkout-payment-option">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="cod"
+                        checked={paymentMethod === "cod"}
+                        onChange={() => setPaymentMethod("cod")}
+                        className="checkout-radio"
+                      />
+                      <span className="font-semibold text-white">Cash on delivery</span>
+                    </label>
+                    {paymentMethod === "cod" && (
+                      <p className="checkout-payment-note text-sm text-white/45">
+                        Pay with cash upon delivery.
+                      </p>
+                    )}
+                  </div>
+                </fieldset>
               </div>
 
-              <p className="mt-6 text-xs leading-relaxed text-white/40">
+              <p className="checkout-privacy-note mt-6">
                 Your personal data will be used to process your order, support your
                 experience throughout this website, and for other purposes described
                 in our{" "}
-                <Link href="/contact" className="text-gold-400 hover:text-gold-300">
+                <Link href="/contact" className="checkout-inline-link">
                   privacy policy
                 </Link>
                 .
               </p>
+
+              <div className="checkout-terms mt-6">
+                <label className="checkout-terms-label">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(event) => {
+                      setAgreedToTerms(event.target.checked);
+                      if (event.target.checked) setTermsError(null);
+                    }}
+                    className="checkout-checkbox"
+                  />
+                  <span className="checkout-terms-text">
+                    I have read and agree to the website{" "}
+                    <Link href="/faq" className="checkout-inline-link">
+                      terms and conditions
+                    </Link>
+                    <span className="checkout-required"> *</span>
+                  </span>
+                </label>
+                {termsError && (
+                  <p className="checkout-terms-error">{termsError}</p>
+                )}
+              </div>
 
               {submitError && (
                 <p className="mt-4 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -538,7 +692,7 @@ export default function CheckoutPage() {
                 className="checkout-place-order mt-8 w-full"
                 disabled={submitting}
               >
-                {submitting ? "Placing orderâ€¦" : "Place order"}
+                {submitting ? "Placing order…" : "Place order"}
               </button>
 
               <p className="mt-4 text-center text-xs text-white/35">

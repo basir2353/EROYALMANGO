@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 
 export default function MarketingLayout({
@@ -8,7 +8,7 @@ export default function MarketingLayout({
 }>) {
   return (
     <div className="site-page">
-      <Navbar />
+      <SiteHeader />
       {children}
       <Footer />
     </div>

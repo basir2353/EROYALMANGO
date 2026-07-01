@@ -28,9 +28,12 @@ export const DEFAULT_PRODUCT_IMAGE = BENEFITS_HERO_IMAGE;
 /** Resolve product/media URLs for display (uploads, catalog paths, remote). */
 export function resolveMediaUrl(url: string): string {
   if (!url || !url.trim()) return DEFAULT_PRODUCT_IMAGE;
-  if (/^https?:\/\//i.test(url)) {
+
+  const trimmed = url.trim();
+
+  if (/^https?:\/\//i.test(trimmed)) {
     try {
-      const parsed = new URL(url);
+      const parsed = new URL(trimmed);
       if (parsed.pathname.startsWith("/images/")) {
         const file = parsed.pathname.split("/").pop() ?? "";
         if (CATALOG_IMAGE_FALLBACKS[file]) return CATALOG_IMAGE_FALLBACKS[file];
@@ -39,19 +42,22 @@ export function resolveMediaUrl(url: string): string {
       if (parsed.pathname.startsWith("/uploads/")) {
         return `${API_ORIGIN}${parsed.pathname}`;
       }
+      if (parsed.hostname === "127.0.0.1" && parsed.port === "4000") {
+        return trimmed.replace("127.0.0.1", "localhost");
+      }
     } catch {
       /* use full URL as-is */
     }
-    return url;
+    return trimmed;
   }
-  if (url.startsWith("/uploads/")) return `${API_ORIGIN}${url}`;
-  if (url.startsWith("/images/")) {
-    const file = url.split("/").pop() ?? "";
+  if (trimmed.startsWith("/uploads/")) return `${API_ORIGIN}${trimmed}`;
+  if (trimmed.startsWith("/images/")) {
+    const file = trimmed.split("/").pop()?.split("?")[0] ?? "";
     if (CATALOG_IMAGE_FALLBACKS[file]) return CATALOG_IMAGE_FALLBACKS[file];
-    return url;
+    return trimmed.split("?")[0] ?? trimmed;
   }
-  if (url.startsWith("/")) return url;
-  return url;
+  if (trimmed.startsWith("/")) return trimmed;
+  return trimmed;
 }
 
 /**

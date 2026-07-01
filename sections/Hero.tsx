@@ -54,8 +54,10 @@ export default function Hero({ data }: { data?: CmsHero | null }) {
   }, []);
 
   return (
-    <section id="home" className="hero-section relative -mt-20 overflow-hidden pt-20">
-      <HeroCarousel />
+    <section id="home" className="hero-section relative -mt-20 overflow-x-hidden pt-20">
+      <div className="hero-carousel-shell w-full max-w-[100vw]">
+        <HeroCarousel slides={hero.slides} />
+      </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-12 lg:px-12">
         <div className="mx-auto max-w-3xl text-center">

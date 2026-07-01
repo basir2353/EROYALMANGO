@@ -153,7 +153,7 @@ export default function Navbar() {
   return (
     <>
       <motion.header
-        className={`fixed inset-x-0 top-0 z-50 h-16 overflow-hidden border-b border-[#eeeeee] bg-white/95 shadow-[0_1px_8px_rgb(0_0_0/0.04)] backdrop-blur-md transition-shadow duration-300 ${
+        className={`fixed inset-x-0 top-[var(--announcement-bar-height,0px)] z-50 h-16 overflow-hidden border-b border-[#eeeeee] bg-white/95 shadow-[0_1px_8px_rgb(0_0_0/0.04)] backdrop-blur-md transition-shadow duration-300 ${
           isScrolled ? "shadow-[0_2px_16px_rgb(0_0_0/0.08)]" : ""
         }`}
         initial={{ y: -100, opacity: 0 }}
@@ -231,7 +231,7 @@ export default function Navbar() {
             />
 
             <motion.div
-              className="mobile-nav-panel fixed inset-x-4 top-16 z-50 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-[#e8e8e8] bg-white shadow-[0_12px_40px_rgb(0_0_0/0.12)] md:hidden"
+              className="mobile-nav-panel fixed inset-x-4 top-[calc(4rem+var(--announcement-bar-height,0px))] z-50 max-h-[calc(100vh-5rem-var(--announcement-bar-height,0px))] overflow-y-auto rounded-xl border border-[#e8e8e8] bg-white shadow-[0_12px_40px_rgb(0_0_0/0.12)] md:hidden"
               initial={{ opacity: 0, y: -16, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.96 }}
@@ -282,8 +282,11 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Spacer for fixed navbar */}
-      <div className="h-16 shrink-0" aria-hidden="true" />
+      {/* Spacer for fixed announcement bar + navbar */}
+      <div
+        className="h-[calc(4rem+var(--announcement-bar-height,0px))] shrink-0"
+        aria-hidden="true"
+      />
     </>
   );
 }

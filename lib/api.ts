@@ -27,17 +27,17 @@ async function parseJsonResponse<T>(res: Response): Promise<T | null> {
 
 async function fetchApi<T>(
   path: string,
-  init?: RequestInit & { fresh?: boolean },
+  init?: RequestInit & { fresh?: boolean; revalidate?: number },
 ): Promise<T | null> {
   try {
-    const { fresh, ...rest } = init ?? {};
+    const { fresh, revalidate, ...rest } = init ?? {};
     const res = await fetch(`${API_URL}${path}`, {
       ...rest,
       ...(fresh
         ? { cache: "no-store" as const }
         : rest.method
           ? {}
-          : { next: { revalidate: 60 } }),
+          : { next: { revalidate: revalidate ?? 60 } }),
     });
     if (!res.ok) return null;
 
@@ -93,6 +93,15 @@ export async function postApi<T>(
   }
 }
 
+export interface CarouselSlide {
+  id: string;
+  image: string;
+  alt: string;
+  link: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
 export interface CmsHero {
   eyebrow: string;
   title: string;
@@ -104,6 +113,7 @@ export interface CmsHero {
   backgroundImage?: string;
   mobileBackgroundImage?: string;
   inlineStats?: { value: string; label: string }[];
+  slides?: CarouselSlide[];
   isVisible: boolean;
 }
 
@@ -187,18 +197,40 @@ export interface WebsiteSettings {
   footerContent?: string;
   copyrightText?: string;
   socialLinks?: { platform: string; url: string }[] | Record<string, string>;
+  announcementBarEnabled?: boolean;
+  announcementMessages?: string[];
 }
 
 export interface PublicSettings {
   website: WebsiteSettings;
-  payments: Record<string, unknown>;
+  payments: PublicPaymentSettings;
   shipping: Record<string, unknown>;
+}
+
+export interface PublicPaymentSettings {
+  cashOnDelivery?: boolean;
+  easyPaisa?: boolean;
+  jazzCash?: boolean;
+  bankTransfer?: boolean;
+  jazzCashAccount?: string;
+  easyPaisaAccount?: string;
+  bankName?: string;
+  bankAccountTitle?: string;
+  bankAccountNumber?: string;
+  bankIban?: string;
+  bankDetails?: string;
+  paymentInstructions?: string;
 }
 
 export type ApiProduct = Record<string, unknown>;
 
-export async function getPublicCms(): Promise<PublicCms | null> {
-  return fetchApi<PublicCms>("/public/cms");
+export async function getPublicCms(options?: { fresh?: boolean }): Promise<PublicCms | null> {
+  const fresh = options?.fresh ?? process.env.NODE_ENV === "development";
+  return fetchApi<PublicCms>("/public/cms", fresh ? { fresh: true } : { revalidate: 5 });
+}
+
+export async function fetchPublicCmsFresh(): Promise<PublicCms | null> {
+  return fetchApi<PublicCms>("/public/cms", { fresh: true });
 }
 
 export async function getPublicAbout(): Promise<AboutContent | null> {
@@ -263,5 +295,49 @@ export async function submitContactForm(body: {
 }
 
 export async function submitOrder(body: Record<string, unknown>) {
-  return postApi<Record<string, unknown>>("/public/orders", body);
+  return postApi<Record<string, unknown> & {
+    id?: string;
+    orderNumber?: string;
+    emailConfirmationSent?: boolean;
+    requiresPaymentReceipt?: boolean;
+    total?: number;
+  }>("/public/orders", body);
+}
+
+export async function uploadPaymentReceipt(
+  orderId: string,
+  email: string,
+  file: File,
+): Promise<ApiPostResult<Record<string, unknown> & { emailConfirmationSent?: boolean }>> {
+  try {
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("receipt", file);
+
+    const res = await fetch(`${API_URL}/public/orders/${orderId}/payment-receipt`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const json = await parseJsonResponse<{
+      success?: boolean;
+      message?: string;
+      data?: Record<string, unknown> & { emailConfirmationSent?: boolean };
+    }>(res);
+
+    if (!json) {
+      return { data: null, error: "Invalid response from server. Please try again." };
+    }
+
+    if (!res.ok) {
+      return { data: null, error: json.message ?? "Could not upload receipt." };
+    }
+
+    return { data: json.data ?? null, error: null };
+  } catch {
+    return {
+      data: null,
+      error: "Could not connect to the server. Make sure the API is running on port 4000.",
+    };
+  }
 }

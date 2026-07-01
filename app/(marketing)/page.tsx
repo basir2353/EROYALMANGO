@@ -10,9 +10,11 @@ import PromoBanner from "@/sections/PromoBanner";
 import { getPublicCms, getPublicTestimonials } from "@/lib/api";
 import { fetchCatalogProducts } from "@/services/catalog";
 
+export const revalidate = 5;
+
 export default async function Home() {
   const [cms, featuredRaw, mostLovedRaw, testimonialsRaw] = await Promise.all([
-    getPublicCms(),
+    getPublicCms({ fresh: true }),
     fetchCatalogProducts({ featured: "true" }),
     fetchCatalogProducts({ mostLoved: "true" }),
     getPublicTestimonials(),
