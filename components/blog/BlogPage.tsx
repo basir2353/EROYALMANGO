@@ -12,9 +12,7 @@ import {
   Calendar,
   ChevronRight,
   Clock,
-  Facebook,
   Filter,
-  Instagram,
   Mail,
   Search,
   Sparkles,
@@ -23,8 +21,8 @@ import {
   TrendingUp,
   User,
   X,
-  Youtube,
 } from "lucide-react";
+import { DEFAULT_SOCIAL_LINKS, SocialLinkIcon } from "@/lib/social-links";
 import type { BlogPost } from "@/services/blog-posts";
 import {
   countPostsByCategory,
@@ -44,11 +42,7 @@ import {
   type ShopProduct,
 } from "@/services/shop-products";
 
-const SOCIAL_LINKS = [
-  { href: "https://instagram.com", label: "Instagram", icon: Instagram },
-  { href: "https://facebook.com", label: "Facebook", icon: Facebook },
-  { href: "https://youtube.com", label: "YouTube", icon: Youtube },
-];
+const SOCIAL_LINKS = DEFAULT_SOCIAL_LINKS;
 
 function PostMeta({
   post,
@@ -780,7 +774,7 @@ function BlogPageContent({
 
             <SidebarPanel title="Follow Us" delay={0.3}>
               <div className="flex flex-wrap gap-2">
-                {SOCIAL_LINKS.map(({ href, label, icon: Icon }) => (
+                {SOCIAL_LINKS.map(({ href, label, icon, filled }) => (
                   <a
                     key={label}
                     href={href}
@@ -789,7 +783,7 @@ function BlogPageContent({
                     className="blog-social-btn"
                     aria-label={label}
                   >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <SocialLinkIcon icon={icon} filled={filled} className="h-4 w-4" />
                   </a>
                 ))}
               </div>

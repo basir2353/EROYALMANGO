@@ -4,14 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import BrandLogo from "@/components/BrandLogo";
 import { useWebsiteSettings } from "@/store/SettingsContext";
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-  Youtube,
-} from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { resolveSocialLinks, SocialLinkIcon } from "@/lib/social-links";
 
 const quickLinks = [
   { href: "/", label: "Home" },
@@ -21,12 +15,6 @@ const quickLinks = [
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
-
-const SOCIAL_ICON_MAP: Record<string, typeof Instagram> = {
-  instagram: Instagram,
-  facebook: Facebook,
-  youtube: Youtube,
-};
 
 function FooterLogo() {
   return <BrandLogo variant="footer" />;
@@ -43,23 +31,7 @@ export default function Footer() {
   const copyright =
     settings?.copyrightText ?? "Copyright © 2026 E Royal Mango. All rights reserved.";
 
-  const socialLinks = Array.isArray(settings?.socialLinks)
-    ? settings.socialLinks.map((link) => ({
-        href: link.url,
-        label: link.platform,
-        icon: SOCIAL_ICON_MAP[link.platform.toLowerCase()] ?? Instagram,
-      }))
-    : settings?.socialLinks && typeof settings.socialLinks === "object"
-      ? Object.entries(settings.socialLinks).map(([platform, url]) => ({
-          href: String(url),
-          label: platform,
-          icon: SOCIAL_ICON_MAP[platform.toLowerCase()] ?? Instagram,
-        }))
-      : [
-          { href: "https://instagram.com", label: "Instagram", icon: Instagram },
-          { href: "https://facebook.com", label: "Facebook", icon: Facebook },
-          { href: "https://youtube.com", label: "YouTube", icon: Youtube },
-        ];
+  const socialLinks = resolveSocialLinks(settings);
 
   const phoneDigits = phone.replace(/\D/g, "");
 
@@ -157,7 +129,7 @@ export default function Footer() {
               mango inspiration.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
-              {socialLinks.map(({ href, label, icon: Icon }) => (
+              {socialLinks.map(({ href, label, icon, filled }) => (
                 <motion.a
                   key={label}
                   href={href}
@@ -169,7 +141,7 @@ export default function Footer() {
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 22 }}
                 >
-                  <Icon className="h-4 w-4" strokeWidth={1.5} />
+                  <SocialLinkIcon icon={icon} filled={filled} className="h-4 w-4" />
                 </motion.a>
               ))}
             </div>

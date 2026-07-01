@@ -1,1 +1,11 @@
-{"version":4,"routes":{"/products/mango":{},"/products/chaunsa-1":{},"/products/dussehri":{},"/products/langra":{},"/products/narrate":{},"/products/sindhri-mango":{},"/products/white-chaunsa":{},"/products/chaunsa":{}},"dynamicRoutes":{"/products/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/products/[slug]","routeRegex":"^\\/products\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"014d3f6fcef6a62af3543123991a3cc0","previewModeSigningKey":"70e8d5c71c76eb6df3d003191b9eeb6f665b4974a2916b7f2ecd1c51ca23317e","previewModeEncryptionKey":"e4b964d852678a6dbd443e0a9924bcce99ae60b9e8bd652bcfa867c55e8d243e"}}
+{
+  "version": 4,
+  "routes": {},
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "68a60b290139162ba8d22ab5c6707fc1",
+    "previewModeSigningKey": "28ed759b71f1155eca2f23f3184d45aeb1e28f1f5c03154d6c7e919bed669eeb",
+    "previewModeEncryptionKey": "9c7196da7c1e02cf25560351e8a9aa1225c4210d0f49612ba7da1fb74772fcfa"
+  }
+}
