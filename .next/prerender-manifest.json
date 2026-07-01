@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "68a60b290139162ba8d22ab5c6707fc1",
-    "previewModeSigningKey": "28ed759b71f1155eca2f23f3184d45aeb1e28f1f5c03154d6c7e919bed669eeb",
-    "previewModeEncryptionKey": "9c7196da7c1e02cf25560351e8a9aa1225c4210d0f49612ba7da1fb74772fcfa"
-  }
-}
+{"version":4,"routes":{"/products/mango":{},"/products/chaunsa-1":{},"/products/dussehri":{},"/products/langra":{},"/products/narrate":{},"/products/sindhri-mango":{},"/products/white-chaunsa":{},"/products/chaunsa":{},"/products/anwar-ratol":{}},"dynamicRoutes":{"/products/[slug]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/products/[slug]","routeRegex":"^\\/products\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"3f0acce1238bae09f00d4bf55707faff","previewModeSigningKey":"c13d16dee3933dddc9fd7ec3904a36e4bc96d1f6411062fa88063a007a7f3b84","previewModeEncryptionKey":"d1810407655598540bfbea29566874dcb080e93a6bf1ce4bd694d514547657f0"}}

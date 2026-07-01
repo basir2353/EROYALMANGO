@@ -83,10 +83,11 @@
     inset-inline: 0;
     top: 0;
     z-index: 60;
-    height: var(--announcement-bar-height, 2.25rem);
+    min-height: 2.25rem;
     background-color: #006400;
     background-image: linear-gradient(180deg, #006400 0%, #004d00 100%);
     border-bottom: 1px solid rgba(245, 200, 66, 0.12);
+    padding-top: env(safe-area-inset-top, 0px);
   }
 
   .announcement-bar-inner {
@@ -94,43 +95,76 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 2.25rem;
+    width: 100%;
     max-width: 80rem;
     margin: 0 auto;
-    padding: 0 3.25rem 0 1rem;
+    padding:
+      0.375rem
+      max(3rem, calc(0.75rem + env(safe-area-inset-right, 0px)))
+      0.375rem
+      max(0.75rem, calc(0.75rem + env(safe-area-inset-left, 0px)));
   }
 
   .announcement-bar-message {
     margin: 0;
+    width: 100%;
+    max-width: calc(100% - 2.5rem);
     text-align: center;
-    font-size: clamp(0.6875rem, 2.2vw, 0.8125rem);
+    font-size: clamp(0.625rem, 2.8vw, 0.8125rem);
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #f5c842;
     line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     animation: announcement-fade-in 0.35s ease;
   }
 
   .announcement-bar-controls {
     position: absolute;
-    right: 0.75rem;
+    top: 50%;
+    right: max(0.5rem, env(safe-area-inset-right, 0px));
     display: inline-flex;
     flex-direction: column;
     gap: 0.1rem;
+    transform: translateY(-50%);
   }
 
   .announcement-bar-nav {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.35rem;
-    height: 1rem;
+    width: 1.5rem;
+    height: 1.125rem;
     border: none;
     background: transparent;
     color: rgba(245, 200, 66, 0.72);
     cursor: pointer;
     transition: color 0.2s ease;
+  }
+
+  @media (min-width: 640px) {
+    .announcement-bar-inner {
+      padding-inline: 3.25rem 1rem;
+    }
+
+    .announcement-bar-message {
+      max-width: calc(100% - 3rem);
+      letter-spacing: 0.08em;
+    }
+
+    .announcement-bar-controls {
+      right: 0.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .announcement-bar-message {
+      font-size: 0.8125rem;
+    }
   }
 
   .announcement-bar-nav:hover {
@@ -2374,12 +2408,29 @@
     background: rgba(212, 162, 74, 0.08);
   }
 
-  .footer-social-btn {
+  .footer-social-row {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
+    gap: clamp(0.625rem, 2.5vw, 0.875rem);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .footer-social-row {
+      justify-content: flex-start;
+    }
+  }
+
+  .footer-social-btn {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: clamp(2.35rem, 7vw, 2.75rem);
+    height: clamp(2.35rem, 7vw, 2.75rem);
     border-radius: 9999px;
     color: rgba(255, 255, 255, 0.7);
     background: linear-gradient(

@@ -1,20 +1,61 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { fetchPublicSettingsFresh } from "@/lib/api";
+import { DEFAULT_ANNOUNCEMENT_MESSAGES } from "@/lib/default-announcements";
 import { useWebsiteSettings } from "@/store/SettingsContext";
 
 const ROTATE_MS = 2000;
-const BAR_HEIGHT = "2.25rem";
+const MIN_BAR_HEIGHT = 36;
+
+function normalizeMessages(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => String(item).trim()).filter(Boolean);
+}
 
 export default function TopAnnouncementBar() {
-  const settings = useWebsiteSettings();
-  const messages = useMemo(() => {
-    const raw = settings?.announcementMessages ?? [];
-    return raw.map((item) => String(item).trim()).filter(Boolean);
-  }, [settings?.announcementMessages]);
+  const contextSettings = useWebsiteSettings();
+  const [fetchedMessages, setFetchedMessages] = useState<string[] | null>(null);
+  const barRef = useRef<HTMLDivElement>(null);
 
-  const enabled = settings?.announcementBarEnabled !== false && messages.length > 0;
+  const contextMessages = useMemo(
+    () => normalizeMessages(contextSettings?.announcementMessages),
+    [contextSettings?.announcementMessages],
+  );
+
+  useEffect(() => {
+    if (contextMessages.length > 0) return;
+
+    let cancelled = false;
+
+    fetchPublicSettingsFresh()
+      .then((settings) => {
+        if (cancelled) return;
+        const messages = normalizeMessages(settings?.website?.announcementMessages);
+        if (messages.length > 0) {
+          setFetchedMessages(messages);
+        }
+      })
+      .catch(() => {
+        /* keep fallback defaults below */
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [contextMessages.length]);
+
+  const messages = useMemo(() => {
+    if (contextMessages.length > 0) return contextMessages;
+    if (fetchedMessages && fetchedMessages.length > 0) return fetchedMessages;
+    return [...DEFAULT_ANNOUNCEMENT_MESSAGES];
+  }, [contextMessages, fetchedMessages]);
+
+  const enabled =
+    (contextSettings?.announcementBarEnabled !== false || contextSettings == null) &&
+    messages.length > 0;
+
   const [index, setIndex] = useState(0);
 
   const goNext = useCallback(() => {
@@ -35,22 +76,54 @@ export default function TopAnnouncementBar() {
     if (index >= messages.length) setIndex(0);
   }, [index, messages.length]);
 
-  useEffect(() => {
+  const updateBarHeight = useCallback(() => {
+    const node = barRef.current;
+    if (!node || !enabled) {
+      document.documentElement.style.setProperty("--announcement-bar-height", "0px");
+      return;
+    }
+
+    const measured = Math.max(node.offsetHeight, MIN_BAR_HEIGHT);
     document.documentElement.style.setProperty(
       "--announcement-bar-height",
-      enabled ? BAR_HEIGHT : "0px",
+      `${measured}px`,
     );
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled) {
+      document.documentElement.style.setProperty("--announcement-bar-height", "0px");
+      return;
+    }
+
+    updateBarHeight();
+
+    const node = barRef.current;
+    if (!node) return;
+
+    const observer = new ResizeObserver(() => updateBarHeight());
+    observer.observe(node);
+    window.addEventListener("resize", updateBarHeight);
+
     return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateBarHeight);
       document.documentElement.style.setProperty("--announcement-bar-height", "0px");
     };
-  }, [enabled]);
+  }, [enabled, messages, updateBarHeight]);
 
   if (!enabled) return null;
 
   const currentMessage = messages[index] ?? messages[0];
 
   return (
-    <div className="announcement-bar" role="region" aria-label="Store announcements">
+    <div
+      ref={barRef}
+      className="announcement-bar"
+      role="region"
+      aria-label="Store announcements"
+      aria-live="polite"
+    >
       <div className="announcement-bar-inner">
         <p key={currentMessage} className="announcement-bar-message">
           {currentMessage}

@@ -32,9 +32,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
 function ShopProductCard({ product, index }: { product: ShopProduct; index: number }) {
   const router = useRouter();
   const { addItem } = useCart();
-  const [selectedWeight, setSelectedWeight] = useState(
-    product.weights?.[0] ?? null,
-  );
+  const defaultWeight = product.weights?.[0] ?? null;
 
   const cardProduct = {
     slug: product.slug,
@@ -43,19 +41,16 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
     image: product.image,
     alt: product.alt,
     minPrice: product.minPrice,
-    maxPrice: product.maxPrice,
     compareAtPrice: product.compareAtPrice,
     onSale: product.onSale,
   };
-
-  const selectHref = `/products/${product.slug}${selectedWeight ? `?weight=${selectedWeight}` : ""}`;
 
   return (
     <ProductCardClassic
       product={cardProduct}
       index={index}
       ctaLabel={product.action === "select" ? "Select options" : "Add to cart"}
-      ctaHref={product.action === "select" ? selectHref : undefined}
+      ctaHref={product.action === "select" ? `/products/${product.slug}` : undefined}
       onCtaClick={
         product.action === "cart"
           ? () => {
@@ -65,30 +60,12 @@ function ShopProductCard({ product, index }: { product: ShopProduct; index: numb
                 image: resolveMediaUrl(product.image),
                 alt: product.alt,
                 quantity: 1,
-                unitPrice: getUnitPrice(product, selectedWeight),
-                weight: selectedWeight ?? undefined,
+                unitPrice: getUnitPrice(product, defaultWeight),
+                weight: defaultWeight ?? undefined,
               });
               router.push("/cart");
             }
           : undefined
-      }
-      beforeCta={
-        <div className="mt-3 flex flex-wrap gap-2 pb-1">
-          {(product.weights ?? ["10kg", "5kg"]).map((weight) => (
-            <button
-              key={weight}
-              type="button"
-              onClick={() => setSelectedWeight(weight)}
-              className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
-                selectedWeight === weight
-                  ? "border-[#ffc107] bg-[#fff8e1] text-[#f57f17]"
-                  : "border-[#e0e0e0] bg-white text-[#78909c] hover:border-[#ffc107]"
-              }`}
-            >
-              {weight}
-            </button>
-          ))}
-        </div>
       }
     />
   );

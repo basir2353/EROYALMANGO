@@ -238,7 +238,15 @@ export async function getPublicAbout(): Promise<AboutContent | null> {
 }
 
 export async function getPublicSettings(): Promise<PublicSettings | null> {
-  return fetchApi<PublicSettings>("/public/settings");
+  const fresh = process.env.NODE_ENV === "development";
+  return fetchApi<PublicSettings>(
+    "/public/settings",
+    fresh ? { fresh: true } : { revalidate: 30 },
+  );
+}
+
+export async function fetchPublicSettingsFresh(): Promise<PublicSettings | null> {
+  return fetchApi<PublicSettings>("/public/settings", { fresh: true });
 }
 
 export async function getPublicProducts(params?: Record<string, string>): Promise<ApiProduct[]> {

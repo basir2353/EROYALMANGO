@@ -29,9 +29,6 @@ function overlayLabel(name: string, category: string) {
 }
 
 function formatCardPrice(product: CatalogProductCardData) {
-  if (product.maxPrice && product.maxPrice !== product.minPrice) {
-    return `${formatShopPrice(product.minPrice)} – ${formatShopPrice(product.maxPrice)}`;
-  }
   return formatShopPrice(product.minPrice);
 }
 

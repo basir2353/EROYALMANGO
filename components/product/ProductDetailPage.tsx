@@ -44,7 +44,6 @@ function RelatedProductCard({
         image: product.image,
         alt: product.alt,
         minPrice: product.minPrice,
-        maxPrice: product.maxPrice,
         compareAtPrice: product.compareAtPrice,
         onSale: product.onSale,
       }}

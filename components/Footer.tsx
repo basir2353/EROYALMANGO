@@ -128,7 +128,7 @@ export default function Footer() {
               Join our community for seasonal harvests, exclusive offers, and
               mango inspiration.
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="footer-social-row mt-6">
               {socialLinks.map(({ href, label, icon, filled }) => (
                 <motion.a
                   key={label}
