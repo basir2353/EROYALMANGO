@@ -94,18 +94,18 @@ export default function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="flex flex-col items-center text-center lg:col-span-3 lg:items-start lg:text-left">
-            <h3 className="footer-heading">Contact Information</h3>
-            <ul className="mt-5 w-full max-w-xs space-y-4 lg:max-w-none">
+          <div className="flex w-full flex-col items-start text-left lg:col-span-3">
+            <h3 className="footer-heading w-full text-center lg:text-left">Contact Information</h3>
+            <ul className="mt-5 w-full space-y-4">
               <li>
                 <a
                   href={`tel:+${phoneDigits}`}
-                  className="footer-contact-item group flex-col items-center text-center lg:flex-row lg:items-start lg:text-left"
+                  className="footer-contact-item group"
                 >
                   <span className="footer-contact-icon">
                     <Phone className="h-4 w-4" strokeWidth={1.5} />
                   </span>
-                  <span>
+                  <span className="min-w-0 flex-1">
                     <span className="block text-[10px] uppercase tracking-[0.2em] text-white/35">
                       Phone
                     </span>
@@ -118,26 +118,26 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${email}`}
-                  className="footer-contact-item group flex-col items-center text-center lg:flex-row lg:items-start lg:text-left"
+                  className="footer-contact-item group"
                 >
                   <span className="footer-contact-icon">
                     <Mail className="h-4 w-4" strokeWidth={1.5} />
                   </span>
-                  <span>
+                  <span className="min-w-0 flex-1">
                     <span className="block text-[10px] uppercase tracking-[0.2em] text-white/35">
                       Email
                     </span>
-                    <span className="mt-0.5 block text-sm text-white/75 transition-colors group-hover:text-gold-300">
+                    <span className="mt-0.5 block break-all text-sm text-white/75 transition-colors group-hover:text-gold-300">
                       {email}
                     </span>
                   </span>
                 </a>
               </li>
-              <li className="footer-contact-item flex-col items-center text-center lg:flex-row lg:items-start lg:text-left">
+              <li className="footer-contact-item">
                 <span className="footer-contact-icon">
                   <MapPin className="h-4 w-4" strokeWidth={1.5} />
                 </span>
-                <span>
+                <span className="min-w-0 flex-1">
                   <span className="block text-[10px] uppercase tracking-[0.2em] text-white/35">
                     Origin
                   </span>

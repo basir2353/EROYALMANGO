@@ -2344,8 +2344,11 @@
 
   .footer-contact-item {
     display: flex;
+    flex-direction: row;
     align-items: flex-start;
     gap: 0.875rem;
+    width: 100%;
+    text-align: left;
   }
 
   .footer-contact-icon {
